@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Life RPG | SkillTree IRL</title>
+    <!-- Font Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #050505;
+            --card-bg: rgba(20, 20, 25, 0.8);
+            --primary: #00f2ff; /* Cyan Neon */
+            --secondary: #7000ff; /* Purple Neon */
+            --accent: #ff00c8; /* Pink Neon */
+            --text: #e0e0e0;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(0, 242, 255, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #101015 0%, #050505 100%);
+            min-height: 100vh;
+        }
+
+        /* --- Sfondo Animato --- */
+        .particles {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* --- Layout --- */
+        .app-container {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            padding-bottom: 100px;
+        }
+
+        /* --- Header / Profilo --- */
+        .profile-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 242, 255, 0.1);
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .rank-tag {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .level-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px auto;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px var(--primary);
+        }
+
+        /* --- Progress Bar --- */
+        .xp-container {
+            margin-top: 15px;
+        }
+        .xp-bar-bg {
+            background: rgba(255,255,255,0.1);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        .xp-bar-fill {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--primary);
+        }
+
+        /* --- Stats Grid --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-box {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 10px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        .stat-value {
+            display: block;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; }
+
+        /* --- Activities --- */
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            border-left: 3px solid var(--accent);
+            padding-left: 10px;
+        }
+
+        .activities-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        .activity-btn {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 15px 5px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+        .activity-btn:active { transform: scale(0.95); background: var(--border); }
+        .activity-btn span { font-size: 0.8rem; font-weight: 500; }
+        .activity-icon { font-size: 1.5rem; }
+
+        /* --- Timer/Focus --- */
+        .focus-box {
+            background: linear-gradient(135deg, rgba(112,0,255,0.2), rgba(0,242,255,0.1));
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            border: 1px solid var(--secondary);
+            margin-bottom: 30px;
+        }
+        #timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            margin: 10px 0;
+            text-shadow: 0 0 10px var(--secondary);
+        }
+        .timer-controls button {
+            background: white; color: black; border: none;
+            padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;
+        }
+
+        /* --- Navigation --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background: rgba(5,5,5,0.9);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px;
+            border-top: 1px solid var(--border);
+            z-index: 100;
+        }
+        .nav-item { color: #888; text-decoration: none; font-size: 1.2rem; cursor: pointer; }
+        .nav-item.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        /* --- Notifications --- */
+        #toast {
+            position: fixed;
+            top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--secondary);
+            padding: 10px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            z-index: 1000;
+            opacity: 0; transition: 0.3s;
+            pointer-events: none;
+        }
+
+        /* --- Skill Tree Modal --- */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none; z-index: 200;
+            padding: 20px; overflow-y: auto;
+        }
+        .skill-node {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 15px; margin: 10px 0;
+            border-radius: 10px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .skill-node.locked { opacity: 0.5; filter: grayscale(1); }
+
+        /* --- Utils --- */
+        .btn-reset { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 5px 10px; border-radius: 5px; margin-top: 20px; cursor: pointer; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="toast">XP GAINED!</div>
+
+    <!-- Canvas per particelle -->
+    <canvas id="particles" class="particles"></canvas>
+
+    <div class="app-container">
+        <!-- Dashboard Principale -->
+        <section id="view-dashboard">
+            <div class="profile-card">
+                <span class="rank-tag" id="rank-name">BEGINNER</span>
+                <div class="level-circle" id="lvl-display">1</div>
+                <h2 id="streak-count">STREAK: 0 DAYS</h2>
+                
+                <div class="xp-container">
+                    <div style="display:flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
+                        <span>XP PROGRESS</span>
+                        <span id="xp-text">0 / 100</span>
+                    </div>
+                    <div class="xp-bar-bg">
+                        <div class="xp-bar-fill" id="xp-fill"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-int">0</span>
+                    <span class="stat-label">Intellect</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-str">0</span>
+                    <span class="stat-label">Strength</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-dis">0</span>
+                    <span class="stat-label">Discipline</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-soc">0</span>
+                    <span class="stat-label">Social</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-cre">0</span>
+                    <span class="stat-label">Creativity</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-value" id="stat-ene">0</span>
+                    <span class="stat-label">Energy</span>
+                </div>
+            </div>
+
+            <h3 class="section-title">DO ACTIVITIES</h3>
+            <div class="activities-grid" id="activities">
+                <!-- Generato da JS -->
+            </div>
+
+            <div class="focus-box">
+                <h3 class="section-title" style="border:none;">FOCUS TIMER</h3>
+                <div id="timer-display">25:00</div>
+                <div class="timer-controls">
+                    <button onclick="toggleTimer()" id="btn-timer">START</button>
+                    <button onclick="resetTimer()" style="background:transparent; color:white; border:1px solid white;">RESET</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skill Tree -->
+        <section id="view-skills" class="hidden">
+            <h3 class="section-title">SKILL TREE</h3>
+            <div id="skill-tree-container">
+                <!-- Sbloccabili -->
+            </div>
+        </section>
+
+        <!-- Impostazioni -->
+        <section id="view-settings" class="hidden">
+            <h3 class="section-title">SETTINGS</h3>
+            <div class="profile-card" style="text-align: left;">
+                <p>Backup / Restore Data</p>
+                <div style="margin: 15px 0; display:flex; gap:10px;">
+                    <button onclick="exportData()" class="timer-controls" style="background:var(--primary); font-size: 12px; padding: 10px;">EXPORT JSON</button>
+                    <button onclick="document.getElementById('importFile').click()" class="timer-controls" style="background:var(--secondary); color:white; font-size: 12px; padding: 10px;">IMPORT JSON</button>
+                    <input type="file" id="importFile" class="hidden" onchange="importData(event)">
+                </div>
+                <button onclick="resetGame()" class="btn-reset">RESET ALL PROGRESS</button>
+            </div>
+        </section>
+    </div>
+
+    <!-- Navigazione -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">◈</div>
+        <div class="nav-item" onclick="switchTab('skills', this)">ᛟ</div>
+        <div class="nav-item" onclick="switchTab('settings', this)">⚙</div>
+    </nav>
+
+    <script>
+        // --- DATA MODEL ---
+        let state = {
+            xp: 0,
+            lvl: 1,
+            stats: { int: 0, str: 0, dis: 0, soc: 0, cre: 0, ene: 10 },
+            skills: [],
+            streak: 0,
+            lastLogin: new Date().toDateString(),
+            achievements: []
+        };
+
+        const activities = [
+            { id: 'study', name: 'Studiare', icon: '📚', xp: 20, stat: 'int' },
+            { id: 'gym', name: 'Allenarsi', icon: '💪', xp: 25, stat: 'str' },
+            { id: 'read', name: 'Leggere', icon: '📖', xp: 15, stat: 'int' },
+            { id: 'sleep', name: 'Dormire', icon: '😴', xp: 10, stat: 'ene' },
+            { id: 'code', name: 'Coding', icon: '💻', xp: 30, stat: 'cre' },
+            { id: 'social', name: 'Socializzare', icon: '🤝', xp: 15, stat: 'soc' },
+            { id: 'meditate', name: 'Meditare', icon: '🧘', xp: 20, stat: 'dis' },
+            { id: 'draw', name: 'Disegnare', icon: '🎨', xp: 20, stat: 'cre' },
+            { id: 'pray', name: 'Pregare', icon: '🙏', xp: 15, stat: 'dis' }
+        ];
+
+        const skillTree = [
+            { id: 1, name: 'Deep Work', req: 5, desc: 'Focus x2 Efficiency', unlocked: false },
+            { id: 2, name: 'Iron Will', req: 10, desc: 'Global XP Boost +10%', unlocked: false },
+            { id: 3, name: 'Polymath', req: 20, desc: 'All stats +5 permanent', unlocked: false },
+            { id: 4, name: 'Sigma Mindset', req: 50, desc: 'Instant Motivation', unlocked: false }
+        ];
+
+        // --- CORE LOGIC ---
+        function init() {
+            loadGame();
+            renderActivities();
+            renderSkills();
+            updateUI();
+            checkStreak();
+            initParticles();
+        }
+
+        function saveGame() {
+            localStorage.setItem('lifeRPG_save', JSON.stringify(state));
+        }
+
+        function loadGame() {
+            const saved = localStorage.getItem('lifeRPG_save');
+            if (saved) {
+                state = JSON.parse(saved);
+            }
+        }
+
+        function updateUI() {
+            // Stats
+            document.getElementById('stat-int').innerText = state.stats.int;
+            document.getElementById('stat-str').innerText = state.stats.str;
+            document.getElementById('stat-dis').innerText = state.stats.dis;
+            document.getElementById('stat-soc').innerText = state.stats.soc;
+            document.getElementById('stat-cre').innerText = state.stats.cre;
+            document.getElementById('stat-ene').innerText = state.stats.ene;
+
+            // Level & XP
+            const xpNext = state.lvl * 100;
+            document.getElementById('lvl-display').innerText = state.lvl;
+            document.getElementById('xp-text').innerText = `${state.xp} / ${xpNext}`;
+            const percent = (state.xp / xpNext) * 100;
+            document.getElementById('xp-fill').style.width = `${percent}%`;
+
+            // Rank
+            let rank = "BEGINNER";
+            if (state.lvl > 5) rank = "GRINDER";
+            if (state.lvl > 15) rank = "WARRIOR";
+            if (state.lvl > 30) rank = "SIGMA";
+            if (state.lvl > 50) rank = "LEGEND";
+            document.getElementById('rank-name').innerText = rank;
+            document.getElementById('streak-count').innerText = `STREAK: ${state.streak} DAYS`;
+        }
+
+        function doActivity(id) {
+            const act = activities.find(a => a.id === id);
+            state.xp += act.xp;
+            state.stats[act.stat] += 1;
+
+            // Check Level Up
+            const xpNext = state.lvl * 100;
+            if (state.xp >= xpNext) {
+                state.xp -= xpNext;
+                state.lvl++;
+                showToast("LEVEL UP! YOU ARE STRONGER");
+            }
+
+            showToast(`+${act.xp} XP | +1 ${act.stat.toUpperCase()}`);
+            saveGame();
+            updateUI();
+        }
+
+        // --- UI RENDERING ---
+        function renderActivities() {
+            const container = document.getElementById('activities');
+            container.innerHTML = activities.map(act => `
+                <button class="activity-btn" onclick="doActivity('${act.id}')">
+                    <span class="activity-icon">${act.icon}</span>
+                    <span>${act.name}</span>
+                </button>
+            `).join('');
+        }
+
+        function renderSkills() {
+            const container = document.getElementById('skill-tree-container');
+            container.innerHTML = skillTree.map(skill => `
+                <div class="skill-node ${state.lvl < skill.req ? 'locked' : ''}">
+                    <div>
+                        <strong>${skill.name}</strong><br>
+                        <small>${skill.desc}</small>
+                    </div>
+                    <span>LVL ${skill.req}</span>
+                </div>
+            `).join('');
+        }
+
+        // --- TIMER SYSTEM ---
+        let timerSeconds = 1500;
+        let timerInterval = null;
+
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer');
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                btn.innerText = "RESUME";
+            } else {
+                btn.innerText = "PAUSE";
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        state.xp += 50;
+                        state.stats.dis += 2;
+                        showToast("SESSION COMPLETE! +50 XP");
+                        resetTimer();
+                        saveGame();
+                        updateUI();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerInterval = null;
+            timerSeconds = 1500;
+            document.getElementById('btn-timer').innerText = "START";
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const m = Math.floor(timerSeconds / 60);
+            const s = timerSeconds % 60;
+            document.getElementById('timer-display').innerText = 
+                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+                // --- UTILS ---
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg;
+            t.style.opacity = "1";
+            t.style.top = "40px";
+            setTimeout(() => {
+                t.style.opacity = "0";
+                t.style.top = "20px";
+            }, 2000);
+        }
+
+        function switchTab(tab, el) {
+            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+        }
+
+        function checkStreak() {
+            const today = new Date().toDateString();
+            if (state.lastLogin !== today) {
+                const lastDate = new Date(state.lastLogin);
+                const diff = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
+                if (diff === 1) {
+                    state.streak++;
+                } else if (diff > 1) {
+                    state.streak = 0;
+                }
+                state.lastLogin = today;
+                saveGame();
+            }
+        }
+
+        function resetGame() {
+            if(confirm("Sei sicuro? Perderai tutti i progressi.")) {
+                localStorage.removeItem('lifeRPG_save');
+                location.reload();
+            }
+        }
+
+        function exportData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "life_rpg_stats.json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    state = imported;
+                    saveGame();
+                    location.reload();
+                } catch (err) {
+                    alert("File non valido");
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // --- PARTICLES ---
+        function initParticles() {
+            const canvas = document.getElementById('particles');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const pArray = [];
+            for(let i=0; i<30; i++) {
+                pArray.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    size: Math.random() * 2,
+                    speed: Math.random() * 0.5 + 0.1
+                });
+            }
+
+            function animate() {
+                ctx.clearRect(0,0,canvas.width, canvas.height);
+                ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
+                pArray.forEach(p => {
+                    p.y -= p.speed;
+                    if(p.y < 0) p.y = canvas.height;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
+                    ctx.fill();
+                });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
+
+        // Init App
+        init();
+    </script>
+</body>
+</html>
+
+               
