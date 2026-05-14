@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Life RPG | SkillTree IRL</title>
-    <!-- Font Google -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #050505;
             --card-bg: rgba(20, 20, 25, 0.8);
-            --primary: #00f2ff; /* Cyan Neon */
-            --secondary: #7000ff; /* Purple Neon */
-            --accent: #ff00c8; /* Pink Neon */
+            --primary: #00f2ff;
+            --secondary: #7000ff;
+            --accent: #ff00c8;
             --text: #e0e0e0;
             --glass: rgba(255, 255, 255, 0.05);
             --border: rgba(0, 242, 255, 0.2);
@@ -34,7 +33,6 @@
             min-height: 100vh;
         }
 
-        /* --- Sfondo Animato --- */
         .particles {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -42,7 +40,6 @@
             pointer-events: none;
         }
 
-        /* --- Layout --- */
         .app-container {
             max-width: 500px;
             margin: 0 auto;
@@ -50,7 +47,6 @@
             padding-bottom: 100px;
         }
 
-        /* --- Header / Profilo --- */
         .profile-card {
             background: var(--card-bg);
             border: 1px solid var(--border);
@@ -88,7 +84,6 @@
             box-shadow: 0 0 15px var(--primary);
         }
 
-        /* --- Progress Bar --- */
         .xp-container {
             margin-top: 15px;
         }
@@ -106,7 +101,6 @@
             box-shadow: 0 0 10px var(--primary);
         }
 
-        /* --- Stats Grid --- */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -128,7 +122,6 @@
         }
         .stat-label { font-size: 0.7rem; text-transform: uppercase; opacity: 0.7; }
 
-        /* --- Activities --- */
         .section-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1rem;
@@ -161,7 +154,6 @@
         .activity-btn span { font-size: 0.8rem; font-weight: 500; }
         .activity-icon { font-size: 1.5rem; }
 
-        /* --- Timer/Focus --- */
         .focus-box {
             background: linear-gradient(135deg, rgba(112,0,255,0.2), rgba(0,242,255,0.1));
             padding: 20px;
@@ -181,7 +173,6 @@
             padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;
         }
 
-        /* --- Navigation --- */
         .bottom-nav {
             position: fixed;
             bottom: 0; left: 0; width: 100%;
@@ -196,7 +187,6 @@
         .nav-item { color: #888; text-decoration: none; font-size: 1.2rem; cursor: pointer; }
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
 
-        /* --- Notifications --- */
         #toast {
             position: fixed;
             top: 20px; left: 50%; transform: translateX(-50%);
@@ -209,13 +199,6 @@
             pointer-events: none;
         }
 
-        /* --- Skill Tree Modal --- */
-        .modal {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            display: none; z-index: 200;
-            padding: 20px; overflow-y: auto;
-        }
         .skill-node {
             background: var(--glass);
             border: 1px solid var(--border);
@@ -225,26 +208,19 @@
         }
         .skill-node.locked { opacity: 0.5; filter: grayscale(1); }
 
-        /* --- Utils --- */
         .btn-reset { background: transparent; color: #ff4444; border: 1px solid #ff4444; padding: 5px 10px; border-radius: 5px; margin-top: 20px; cursor: pointer; }
         .hidden { display: none; }
     </style>
 </head>
 <body>
-
     <div id="toast">XP GAINED!</div>
-
-    <!-- Canvas per particelle -->
     <canvas id="particles" class="particles"></canvas>
-
     <div class="app-container">
-        <!-- Dashboard Principale -->
         <section id="view-dashboard">
             <div class="profile-card">
                 <span class="rank-tag" id="rank-name">BEGINNER</span>
                 <div class="level-circle" id="lvl-display">1</div>
                 <h2 id="streak-count">STREAK: 0 DAYS</h2>
-                
                 <div class="xp-container">
                     <div style="display:flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px;">
                         <span>XP PROGRESS</span>
@@ -255,39 +231,16 @@
                     </div>
                 </div>
             </div>
-
             <div class="stats-grid">
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-int">0</span>
-                    <span class="stat-label">Intellect</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-str">0</span>
-                    <span class="stat-label">Strength</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-dis">0</span>
-                    <span class="stat-label">Discipline</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-soc">0</span>
-                    <span class="stat-label">Social</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-cre">0</span>
-                    <span class="stat-label">Creativity</span>
-                </div>
-                <div class="stat-box">
-                    <span class="stat-value" id="stat-ene">0</span>
-                    <span class="stat-label">Energy</span>
-                </div>
+                <div class="stat-box"><span class="stat-value" id="stat-int">0</span><span class="stat-label">Intellect</span></div>
+                <div class="stat-box"><span class="stat-value" id="stat-str">0</span><span class="stat-label">Strength</span></div>
+                <div class="stat-box"><span class="stat-value" id="stat-dis">0</span><span class="stat-label">Discipline</span></div>
+                <div class="stat-box"><span class="stat-value" id="stat-soc">0</span><span class="stat-label">Social</span></div>
+                <div class="stat-box"><span class="stat-value" id="stat-cre">0</span><span class="stat-label">Creativity</span></div>
+                <div class="stat-box"><span class="stat-value" id="stat-ene">0</span><span class="stat-label">Energy</span></div>
             </div>
-
             <h3 class="section-title">DO ACTIVITIES</h3>
-            <div class="activities-grid" id="activities">
-                <!-- Generato da JS -->
-            </div>
-
+            <div class="activities-grid" id="activities"></div>
             <div class="focus-box">
                 <h3 class="section-title" style="border:none;">FOCUS TIMER</h3>
                 <div id="timer-display">25:00</div>
@@ -297,16 +250,10 @@
                 </div>
             </div>
         </section>
-
-        <!-- Skill Tree -->
         <section id="view-skills" class="hidden">
             <h3 class="section-title">SKILL TREE</h3>
-            <div id="skill-tree-container">
-                <!-- Sbloccabili -->
-            </div>
+            <div id="skill-tree-container"></div>
         </section>
-
-        <!-- Impostazioni -->
         <section id="view-settings" class="hidden">
             <h3 class="section-title">SETTINGS</h3>
             <div class="profile-card" style="text-align: left;">
@@ -320,24 +267,19 @@
             </div>
         </section>
     </div>
-
-    <!-- Navigazione -->
     <nav class="bottom-nav">
         <div class="nav-item active" onclick="switchTab('dashboard', this)">◈</div>
         <div class="nav-item" onclick="switchTab('skills', this)">ᛟ</div>
         <div class="nav-item" onclick="switchTab('settings', this)">⚙</div>
     </nav>
-
     <script>
-        // --- DATA MODEL ---
         let state = {
             xp: 0,
             lvl: 1,
             stats: { int: 0, str: 0, dis: 0, soc: 0, cre: 0, ene: 10 },
             skills: [],
             streak: 0,
-            lastLogin: new Date().toDateString(),
-            achievements: []
+            lastLogin: new Date().toDateString()
         };
 
         const activities = [
@@ -353,13 +295,12 @@
         ];
 
         const skillTree = [
-            { id: 1, name: 'Deep Work', req: 5, desc: 'Focus x2 Efficiency', unlocked: false },
-            { id: 2, name: 'Iron Will', req: 10, desc: 'Global XP Boost +10%', unlocked: false },
-            { id: 3, name: 'Polymath', req: 20, desc: 'All stats +5 permanent', unlocked: false },
-            { id: 4, name: 'Sigma Mindset', req: 50, desc: 'Instant Motivation', unlocked: false }
+            { id: 1, name: 'Deep Work', req: 5, desc: 'Focus x2 Efficiency' },
+            { id: 2, name: 'Iron Will', req: 10, desc: 'Global XP Boost +10%' },
+            { id: 3, name: 'Polymath', req: 20, desc: 'All stats +5 permanent' },
+            { id: 4, name: 'Sigma Mindset', req: 50, desc: 'Instant Motivation' }
         ];
 
-        // --- CORE LOGIC ---
         function init() {
             loadGame();
             renderActivities();
@@ -375,28 +316,20 @@
 
         function loadGame() {
             const saved = localStorage.getItem('lifeRPG_save');
-            if (saved) {
-                state = JSON.parse(saved);
-            }
+            if (saved) state = JSON.parse(saved);
         }
 
         function updateUI() {
-            // Stats
             document.getElementById('stat-int').innerText = state.stats.int;
             document.getElementById('stat-str').innerText = state.stats.str;
             document.getElementById('stat-dis').innerText = state.stats.dis;
             document.getElementById('stat-soc').innerText = state.stats.soc;
             document.getElementById('stat-cre').innerText = state.stats.cre;
             document.getElementById('stat-ene').innerText = state.stats.ene;
-
-            // Level & XP
             const xpNext = state.lvl * 100;
             document.getElementById('lvl-display').innerText = state.lvl;
             document.getElementById('xp-text').innerText = `${state.xp} / ${xpNext}`;
-            const percent = (state.xp / xpNext) * 100;
-            document.getElementById('xp-fill').style.width = `${percent}%`;
-
-            // Rank
+            document.getElementById('xp-fill').style.width = `${(state.xp / xpNext) * 100}%`;
             let rank = "BEGINNER";
             if (state.lvl > 5) rank = "GRINDER";
             if (state.lvl > 15) rank = "WARRIOR";
@@ -410,24 +343,19 @@
             const act = activities.find(a => a.id === id);
             state.xp += act.xp;
             state.stats[act.stat] += 1;
-
-            // Check Level Up
             const xpNext = state.lvl * 100;
             if (state.xp >= xpNext) {
                 state.xp -= xpNext;
                 state.lvl++;
-                showToast("LEVEL UP! YOU ARE STRONGER");
+                showToast("LEVEL UP!");
             }
-
             showToast(`+${act.xp} XP | +1 ${act.stat.toUpperCase()}`);
             saveGame();
             updateUI();
         }
 
-        // --- UI RENDERING ---
         function renderActivities() {
-            const container = document.getElementById('activities');
-            container.innerHTML = activities.map(act => `
+            document.getElementById('activities').innerHTML = activities.map(act => `
                 <button class="activity-btn" onclick="doActivity('${act.id}')">
                     <span class="activity-icon">${act.icon}</span>
                     <span>${act.name}</span>
@@ -436,19 +364,14 @@
         }
 
         function renderSkills() {
-            const container = document.getElementById('skill-tree-container');
-            container.innerHTML = skillTree.map(skill => `
+            document.getElementById('skill-tree-container').innerHTML = skillTree.map(skill => `
                 <div class="skill-node ${state.lvl < skill.req ? 'locked' : ''}">
-                    <div>
-                        <strong>${skill.name}</strong><br>
-                        <small>${skill.desc}</small>
-                    </div>
+                    <div><strong>${skill.name}</strong><br><small>${skill.desc}</small></div>
                     <span>LVL ${skill.req}</span>
                 </div>
             `).join('');
         }
 
-        // --- TIMER SYSTEM ---
         let timerSeconds = 1500;
         let timerInterval = null;
 
@@ -467,7 +390,7 @@
                         clearInterval(timerInterval);
                         state.xp += 50;
                         state.stats.dis += 2;
-                        showToast("SESSION COMPLETE! +50 XP");
+                        showToast("COMPLETE! +50 XP");
                         resetTimer();
                         saveGame();
                         updateUI();
@@ -487,20 +410,15 @@
         function updateTimerDisplay() {
             const m = Math.floor(timerSeconds / 60);
             const s = timerSeconds % 60;
-            document.getElementById('timer-display').innerText = 
-                `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+            document.getElementById('timer-display').innerText = `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
         }
 
-                // --- UTILS ---
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg;
             t.style.opacity = "1";
             t.style.top = "40px";
-            setTimeout(() => {
-                t.style.opacity = "0";
-                t.style.top = "20px";
-            }, 2000);
+            setTimeout(() => { t.style.opacity = "0"; t.style.top = "20px"; }, 2000);
         }
 
         function switchTab(tab, el) {
@@ -515,31 +433,20 @@
             if (state.lastLogin !== today) {
                 const lastDate = new Date(state.lastLogin);
                 const diff = Math.floor((new Date() - lastDate) / (1000 * 60 * 60 * 24));
-                if (diff === 1) {
-                    state.streak++;
-                } else if (diff > 1) {
-                    state.streak = 0;
-                }
+                if (diff === 1) state.streak++; else if (diff > 1) state.streak = 0;
                 state.lastLogin = today;
                 saveGame();
             }
         }
 
-        function resetGame() {
-            if(confirm("Sei sicuro? Perderai tutti i progressi.")) {
-                localStorage.removeItem('lifeRPG_save');
-                location.reload();
-            }
-        }
+        function resetGame() { if(confirm("Sei sicuro?")) { localStorage.removeItem('lifeRPG_save'); location.reload(); } }
 
         function exportData() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "life_rpg_stats.json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
+            const a = document.createElement('a');
+            a.setAttribute("href", dataStr);
+            a.setAttribute("download", "life_rpg_stats.json");
+            a.click();
         }
 
         function importData(event) {
@@ -547,54 +454,27 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    state = imported;
-                    saveGame();
-                    location.reload();
-                } catch (err) {
-                    alert("File non valido");
-                }
+                try { state = JSON.parse(e.target.result); saveGame(); location.reload(); } catch (err) { alert("Errore!"); }
             };
             reader.readAsText(file);
         }
 
-        // --- PARTICLES ---
         function initParticles() {
             const canvas = document.getElementById('particles');
             const ctx = canvas.getContext('2d');
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
             const pArray = [];
-            for(let i=0; i<30; i++) {
-                pArray.push({
-                    x: Math.random() * canvas.width,
-                    y: Math.random() * canvas.height,
-                    size: Math.random() * 2,
-                    speed: Math.random() * 0.5 + 0.1
-                });
-            }
-
+            for(let i=0; i<30; i++) pArray.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height, size: Math.random() * 2, speed: Math.random() * 0.5 + 0.1 });
             function animate() {
                 ctx.clearRect(0,0,canvas.width, canvas.height);
                 ctx.fillStyle = "rgba(0, 242, 255, 0.3)";
-                pArray.forEach(p => {
-                    p.y -= p.speed;
-                    if(p.y < 0) p.y = canvas.height;
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.size, 0, Math.PI*2);
-                    ctx.fill();
-                });
+                pArray.forEach(p => { p.y -= p.speed; if(p.y < 0) p.y = canvas.height; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI*2); ctx.fill(); });
                 requestAnimationFrame(animate);
             }
             animate();
         }
-
-        // Init App
         init();
     </script>
 </body>
 </html>
-
-               
